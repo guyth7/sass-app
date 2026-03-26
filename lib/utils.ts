@@ -12,10 +12,10 @@ export const getSubjectColor = (subject: string) => {
 };
 
 export const configureAssistant = (voice: string, style: string) => {
-  const voiceId =
-    voices[voice as keyof typeof voices][
+  const selectedVoice =
+    voices[voice as keyof typeof voices]?.[
       style as keyof (typeof voices)[keyof typeof voices]
-    ] || "sarah";
+    ] || voices.female.formal;
 
   const vapiAssistant: CreateAssistantDTO = {
     name: "Companion",
@@ -26,15 +26,7 @@ export const configureAssistant = (voice: string, style: string) => {
       model: "nova-3",
       language: "en",
     },
-    voice: {
-      provider: "11labs",
-      voiceId: voiceId,
-      stability: 0.4,
-      similarityBoost: 0.8,
-      speed: 1,
-      style: 0.5,
-      useSpeakerBoost: true,
-    },
+    voice: selectedVoice,
     model: {
       provider: "openai",
       model: "gpt-4",

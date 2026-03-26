@@ -1,28 +1,23 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { getSubjectColor } from "@/lib/utils";
+import Image from "next/image";
 import CompanionComponent from "@/components/CompanionComponent";
 import { getCompanion } from "@/lib/actions/companion.action";
-import { getSubjectColor } from "@/lib/utils";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/dist/client/components/navigation";
-import Image from "next/image";
-import React from "react";
 
-interface ComapnionSessionPageProps {
+interface CompanionSessionPageProps {
   params: Promise<{ id: string }>;
 }
-const CompanionSession = async ({ params }: ComapnionSessionPageProps) => {
+
+const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
   const { id } = await params;
   const companion = await getCompanion(id);
   const user = await currentUser();
 
-  const { name, subject, topic, duration } = companion;
+  const { name, subject, title, topic, duration } = companion;
 
-  if (!user) {
-    return redirect("/sign-in");
-  }
-
-  if (!name) {
-    return redirect("/companions");
-  }
+  if (!user) redirect("/sign-in");
+  if (!name) redirect("/companions");
 
   return (
     <main>
@@ -42,7 +37,7 @@ const CompanionSession = async ({ params }: ComapnionSessionPageProps) => {
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold">{name}</p>
+              <p className="font-bold text-2xl">{name}</p>
               <div className="subject-badge max-sm:hidden">{subject}</div>
             </div>
             <p className="text-lg">{topic}</p>
@@ -52,6 +47,7 @@ const CompanionSession = async ({ params }: ComapnionSessionPageProps) => {
           {duration} minutes
         </div>
       </article>
+
       <CompanionComponent
         {...companion}
         companionId={id}

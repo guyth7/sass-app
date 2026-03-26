@@ -52,13 +52,14 @@ const CompanionForm = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const companion = await createCompanion(values);
+      const result = await createCompanion(values);
 
-      if (companion?.id) {
-        router.push(`/companions/${companion.id}`);
-      } else {
-        throw new Error("Failed to create companion");
+      if (result.ok) {
+        router.push(`/companions/${result.data.id}`);
+        return;
       }
+
+      form.setError("root", { message: result.error });
     } catch (error) {
       console.error("Error creating companion:", error);
       form.setError("root", {
@@ -210,6 +211,11 @@ const CompanionForm = () => {
         <Button type="submit" className="w-full cursor-pointer">
           Build Your Companion
         </Button>
+        {form.formState.errors.root?.message ? (
+          <p className="text-sm text-red-500">
+            {form.formState.errors.root.message}
+          </p>
+        ) : null}
       </form>
     </Form>
   );

@@ -3,6 +3,7 @@ enum MessageTypeEnum {
   FUNCTION_CALL = "function-call",
   FUNCTION_CALL_RESULT = "function-call-result",
   ADD_MESSAGE = "add-message",
+  STATUS_UPDATE = "status-update",
 }
 
 enum MessageRoleEnum {
@@ -44,7 +45,22 @@ interface FunctionCallResultMessage extends BaseMessage {
   };
 }
 
+interface StatusUpdateMessage extends BaseMessage {
+  type: MessageTypeEnum.STATUS_UPDATE;
+  status:
+    | "scheduled"
+    | "queued"
+    | "ringing"
+    | "in-progress"
+    | "forwarding"
+    | "ended"
+    | "not-found"
+    | "deletion-failed";
+  endedReason?: string;
+}
+
 type Message =
   | TranscriptMessage
   | FunctionCallMessage
-  | FunctionCallResultMessage;
+  | FunctionCallResultMessage
+  | StatusUpdateMessage;
